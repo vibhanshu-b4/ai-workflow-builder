@@ -1,0 +1,18 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+*.err
+
+# Keep assessment handouts out of the repo
+*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
