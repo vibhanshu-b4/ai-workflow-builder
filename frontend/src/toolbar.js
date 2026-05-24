@@ -2,7 +2,7 @@
 
 import { DraggableNode } from './draggableNode';
 
-export const PipelineToolbar = () => {
+export const PipelineToolbar = ({ onTextButtonClick }) => {
 
     return (
         <aside className="pipeline-toolbar">
@@ -20,7 +20,7 @@ export const PipelineToolbar = () => {
                     <DraggableNode type='customInput' label='Input' />
                     <DraggableNode type='llm' label='LLM' />
                     <DraggableNode type='customOutput' label='Output' />
-                    <DraggableNode type='text' label='Text' />
+                    <DraggableNode type='text' label='Text' onClick={onTextButtonClick} />
                 </div>
             </div>
 

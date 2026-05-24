@@ -12,6 +12,10 @@ export const useStore = create((set, get) => ({
     nodes: [],
     edges: [],
     nodeIDs: {},
+    addNodeAtCenter: () => {},
+    setAddNodeAtCenter: (adder) => {
+      set({ addNodeAtCenter: adder });
+    },
     getNodeID: (type) => {
         const newIDs = {...get().nodeIDs};
         if (newIDs[type] === undefined) {

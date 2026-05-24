@@ -143,7 +143,7 @@
 - [x] Added selected-node glow styling through React Flow selected state selectors.
 - [x] Updated React Flow background to a subtle dot grid.
 - [x] Re-ran frontend production build after the complete Part 2 UI/UX styling upgrade.
-- [x] Reverted Part 3 modal/popup attempt and restored TextNode to a stable inline canvas node (Part 2 baseline).
+- [x] Implemented Part 3 Step 1 with a floating, draggable text editor panel inside the canvas that pans/zooms with the workspace.
 
 ## TODOs
 
@@ -167,7 +167,7 @@
 - Nodes now use dark cards, rounded corners, neon accent borders, soft glows, stronger selected states, and refined shadows.
 - Handles are larger, cleaner, consistently spaced, theme-colored, and glow on hover/connection.
 - Node typography is tighter and more readable across titles, badges, fields, descriptions, and controls.
-- TextNode is currently a simple inline canvas node (no popup/modal).
+- Text editor now opens as a floating, draggable panel inside the canvas (no popup/modal).
 - React Flow controls, MiniMap, edges, connection lines, and submit area now match the dark workflow-builder theme.
 - Responsive layout stacks the sidebar above the canvas on smaller screens.
 
@@ -186,11 +186,15 @@
 - `frontend/src/nodes/inputNode.js`: Refactored to `BaseNode` and added semantic styling class.
 - `frontend/src/nodes/outputNode.js`: Refactored to `BaseNode` and added semantic styling class.
 - `frontend/src/nodes/llmNode.js`: Refactored to `BaseNode` and added semantic styling class.
-- `frontend/src/nodes/textNode.js`: Refactored to `BaseNode` and styled as a prompt node.
+- `frontend/src/App.js`: Owns editor state and wires the Text palette click.
+- `frontend/src/toolbar.js`: Text palette button triggers editor + node creation.
+- `frontend/src/ui.js`: Renders the floating, draggable in-canvas panel and registers a centered add-node handler.
+- `frontend/src/store.js`: Added store hook for programmatic node creation.
+- `frontend/src/index.css`: Added floating panel styling.
 
 ## Pending Issues
 
-- Part 3 modal/popup attempt was reverted; TextNode is back to an inline node.
+- Part 3 Step 1 is complete with a floating in-canvas editor panel; remaining Part 3 work is dynamic resizing and variable-driven handles.
 - Text node dynamic resizing is still pending for Part 3.
 - Text node variable parsing and dynamic variable handles are still pending for Part 3.
 - Node component local state is not synchronized back into the Zustand store.

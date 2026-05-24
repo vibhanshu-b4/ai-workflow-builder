@@ -1,13 +1,6 @@
-import { useState } from 'react';
 import { BaseNode } from './baseNode';
 
-export const TextNode = ({ id, data }) => {
-  const [currText, setCurrText] = useState(data?.text || '{{input}}');
-
-  const handleTextChange = (e) => {
-    setCurrText(e.target.value);
-  };
-
+export const TextNode = ({ id }) => {
   return (
     <BaseNode
       id={id}
@@ -17,17 +10,7 @@ export const TextNode = ({ id, data }) => {
       className="base-node--prompt"
       bodyClassName="text-node"
     >
-      <label className="node-field">
-        <span>Text</span>
-        <textarea
-          className="node-input node-textarea nodrag"
-          value={currText}
-          onChange={handleTextChange}
-          rows={5}
-          spellCheck="false"
-          placeholder="Write prompt text..."
-        />
-      </label>
+      <p className="node-description">Edit prompt text in the right-side panel.</p>
     </BaseNode>
   );
 }
