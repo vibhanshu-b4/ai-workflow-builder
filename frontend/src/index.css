@@ -94,7 +94,6 @@ textarea {
   top: 0;
   z-index: 5;
   width: 360px;
-  max-width: min(420px, 90%);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -108,15 +107,6 @@ textarea {
   pointer-events: auto;
 }
 
-.pipeline-floating-panel__viewport {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  transform-origin: 0 0;
-}
 
 .pipeline-floating-panel__header {
   display: flex;
@@ -175,11 +165,12 @@ textarea {
 
 .pipeline-floating-panel__textarea {
   width: 100%;
-  min-height: 220px;
+  min-height: 80px;
   border: 1px solid rgba(151, 126, 255, 0.22);
   border-radius: 14px;
   padding: 12px 14px;
   resize: none;
+  overflow: hidden;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
     rgba(8, 5, 18, 0.9);

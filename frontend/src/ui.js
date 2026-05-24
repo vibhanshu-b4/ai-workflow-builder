@@ -2,7 +2,7 @@
 // Displays the drag-and-drop UI
 // --------------------------------------------------
 
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useLayoutEffect } from 'react';
 import ReactFlow, { Controls, Background, MiniMap, useStore as useRFStore } from 'reactflow';
 import { useStore } from './store';
 import { shallow } from 'zustand/shallow';
@@ -28,6 +28,70 @@ const nodeTypes = {
   delay: DelayNode,
 };
 
+const PANEL_MIN_WIDTH = 320;
+const PANEL_MAX_WIDTH = 600;
+const TEXTAREA_MIN_HEIGHT = 80;
+
+const FloatingPanel = ({
+  panelRef,
+  headerRef,
+  textareaRef,
+  panelPosition,
+  panelWidth,
+  onHeaderPointerDown,
+  onClose,
+  value,
+  onChange,
+}) => {
+  const viewportTransform = useRFStore((state) => state.transform);
+  const [vx, vy, vZoom] = viewportTransform;
+
+  return (
+    <section
+      ref={panelRef}
+      className="pipeline-floating-panel nodrag nopan"
+      style={{
+        width: panelWidth,
+        transform: `translate(${vx}px, ${vy}px) scale(${vZoom}) translate(${panelPosition.x}px, ${panelPosition.y}px)`,
+      }}
+      onPointerDown={(event) => event.stopPropagation()}
+    >
+      <header
+        ref={headerRef}
+        className="pipeline-floating-panel__header"
+        onPointerDown={onHeaderPointerDown}
+      >
+        <div>
+          <span className="pipeline-floating-panel__eyebrow">Editor</span>
+          <h2 className="pipeline-floating-panel__title">Text Node</h2>
+        </div>
+        <button
+          className="pipeline-floating-panel__close"
+          type="button"
+          onPointerDown={(event) => event.stopPropagation()}
+          onClick={(event) => {
+            event.stopPropagation();
+            onClose();
+          }}
+          aria-label="Close text editor"
+        >
+          x
+        </button>
+      </header>
+      <textarea
+        ref={textareaRef}
+        className="pipeline-floating-panel__textarea nodrag nopan"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        rows={1}
+        spellCheck="false"
+        placeholder="Write prompt text..."
+        onPointerDown={(event) => event.stopPropagation()}
+      />
+    </section>
+  );
+};
+
 const selector = (state) => ({
   nodes: state.nodes,
   edges: state.edges,
@@ -48,10 +112,14 @@ export const PipelineUI = ({
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const panelRef = useRef(null);
+    const panelHeaderRef = useRef(null);
+    const panelTextareaRef = useRef(null);
+    const measureCanvasRef = useRef(null);
     const dragOffsetRef = useRef({ x: 0, y: 0 });
     const dragPointerIdRef = useRef(null);
     const [panelPosition, setPanelPosition] = useState({ x: 24, y: 24 });
     const [isPanelDragging, setIsPanelDragging] = useState(false);
+    const [panelWidth, setPanelWidth] = useState(PANEL_MIN_WIDTH);
     const {
       nodes,
       edges,
@@ -169,6 +237,10 @@ export const PipelineUI = ({
         return;
       }
 
+      if (event.target.closest('.pipeline-floating-panel__close')) {
+        return;
+      }
+
       event.preventDefault();
       event.stopPropagation();
 
@@ -191,50 +263,53 @@ export const PipelineUI = ({
       setIsPanelDragging(true);
     };
 
-    const FloatingPanel = () => {
-      const viewportTransform = useRFStore((state) => state.transform);
-      const [vx, vy, vZoom] = viewportTransform;
+    useLayoutEffect(() => {
+      if (!isTextEditorOpen || !panelRef.current || !panelTextareaRef.current) {
+        return;
+      }
 
-      return (
-        <div
-          className="pipeline-floating-panel__viewport"
-          style={{ transform: `translate(${vx}px, ${vy}px) scale(${vZoom})` }}
-        >
-          <section
-            ref={panelRef}
-            className="pipeline-floating-panel nodrag nopan"
-            style={{ transform: `translate(${panelPosition.x}px, ${panelPosition.y}px)` }}
-            onPointerDown={(event) => event.stopPropagation()}
-          >
-            <header
-              className="pipeline-floating-panel__header"
-              onPointerDown={handlePanelHeaderPointerDown}
-            >
-              <div>
-                <span className="pipeline-floating-panel__eyebrow">Editor</span>
-                <h2 className="pipeline-floating-panel__title">Text Node</h2>
-              </div>
-              <button
-                className="pipeline-floating-panel__close"
-                type="button"
-                onClick={onCloseTextEditor}
-                aria-label="Close text editor"
-              >
-                x
-              </button>
-            </header>
-            <textarea
-              className="pipeline-floating-panel__textarea"
-              value={textEditorValue}
-              onChange={(event) => onTextEditorChange(event.target.value)}
-              rows={10}
-              spellCheck="false"
-              placeholder="Write prompt text..."
-            />
-          </section>
-        </div>
-      );
-    };
+      const panelStyle = window.getComputedStyle(panelRef.current);
+      const panelPaddingX =
+        parseFloat(panelStyle.paddingLeft) + parseFloat(panelStyle.paddingRight) +
+        parseFloat(panelStyle.borderLeftWidth) + parseFloat(panelStyle.borderRightWidth);
+      const textStyle = window.getComputedStyle(panelTextareaRef.current);
+      const textareaPaddingX =
+        parseFloat(textStyle.paddingLeft) + parseFloat(textStyle.paddingRight) +
+        parseFloat(textStyle.borderLeftWidth) + parseFloat(textStyle.borderRightWidth);
+      const font = textStyle.font || `${textStyle.fontSize} ${textStyle.fontFamily}`;
+      const canvas = measureCanvasRef.current || document.createElement('canvas');
+      measureCanvasRef.current = canvas;
+      const context = canvas.getContext('2d');
+
+      let measuredWidth = 0;
+      if (context) {
+        context.font = font;
+        const lines = textEditorValue.split('\n');
+        measuredWidth = Math.max(
+          ...lines.map((line) => context.measureText(line || ' ').width),
+          0
+        );
+      }
+
+      const contentWidth = measuredWidth + textareaPaddingX + panelPaddingX + 12;
+      const nextWidth = Math.min(PANEL_MAX_WIDTH, Math.max(PANEL_MIN_WIDTH, Math.ceil(contentWidth)));
+
+      setPanelWidth((prev) => (prev !== nextWidth ? nextWidth : prev));
+    }, [isTextEditorOpen, textEditorValue]);
+
+    useLayoutEffect(() => {
+      if (!isTextEditorOpen || !panelTextareaRef.current) {
+        return;
+      }
+
+      const textarea = panelTextareaRef.current;
+      const textStyle = window.getComputedStyle(textarea);
+      const minHeight = Math.max(TEXTAREA_MIN_HEIGHT, parseFloat(textStyle.minHeight) || 0);
+      textarea.style.height = 'auto';
+      const nextHeight = Math.max(minHeight, Math.ceil(textarea.scrollHeight));
+      textarea.style.height = `${nextHeight}px`;
+    }, [isTextEditorOpen, textEditorValue, panelWidth]);
+
 
     useEffect(() => {
       if (!reactFlowInstance || !reactFlowWrapper.current) {
@@ -336,7 +411,19 @@ export const PipelineUI = ({
                   pannable
                   zoomable
                 />
-                {isTextEditorOpen && <FloatingPanel />}
+                {isTextEditorOpen && (
+                  <FloatingPanel
+                    panelRef={panelRef}
+                    headerRef={panelHeaderRef}
+                    textareaRef={panelTextareaRef}
+                    panelPosition={panelPosition}
+                    panelWidth={panelWidth}
+                    onHeaderPointerDown={handlePanelHeaderPointerDown}
+                    onClose={onCloseTextEditor}
+                    value={textEditorValue}
+                    onChange={onTextEditorChange}
+                  />
+                )}
             </ReactFlow>
         </div>
         </>
