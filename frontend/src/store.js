@@ -12,9 +12,13 @@ export const useStore = create((set, get) => ({
     nodes: [],
     edges: [],
     nodeIDs: {},
+    textEditorVariables: [],
     addNodeAtCenter: () => {},
     setAddNodeAtCenter: (adder) => {
       set({ addNodeAtCenter: adder });
+    },
+    setTextEditorVariables: (variables) => {
+      set({ textEditorVariables: variables });
     },
     getNodeID: (type) => {
         const newIDs = {...get().nodeIDs};

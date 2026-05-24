@@ -32,6 +32,17 @@ const PANEL_MIN_WIDTH = 320;
 const PANEL_MAX_WIDTH = 600;
 const TEXTAREA_MIN_HEIGHT = 80;
 
+const resizeTextarea = (textarea) => {
+  if (!textarea) {
+    return;
+  }
+
+  const textStyle = window.getComputedStyle(textarea);
+  const minHeight = Math.max(TEXTAREA_MIN_HEIGHT, parseFloat(textStyle.minHeight) || 0);
+  textarea.style.height = 'auto';
+  textarea.style.height = `${Math.max(minHeight, Math.ceil(textarea.scrollHeight))}px`;
+};
+
 const FloatingPanel = ({
   panelRef,
   headerRef,
@@ -42,9 +53,15 @@ const FloatingPanel = ({
   onClose,
   value,
   onChange,
+  parsedVariables,
 }) => {
   const viewportTransform = useRFStore((state) => state.transform);
   const [vx, vy, vZoom] = viewportTransform;
+
+  const handleTextareaInput = (event) => {
+    resizeTextarea(event.currentTarget);
+    onChange(event.currentTarget.value);
+  };
 
   return (
     <section
@@ -82,12 +99,26 @@ const FloatingPanel = ({
         ref={textareaRef}
         className="pipeline-floating-panel__textarea nodrag nopan"
         value={value}
-        onChange={(event) => onChange(event.target.value)}
+        onChange={handleTextareaInput}
         rows={1}
         spellCheck="false"
         placeholder="Write prompt text..."
         onPointerDown={(event) => event.stopPropagation()}
       />
+        <div className="pipeline-floating-panel__variables">
+          <span className="pipeline-floating-panel__variables-label">Variables</span>
+          {parsedVariables.length === 0 ? (
+            <p className="pipeline-floating-panel__variables-empty">No variables detected.</p>
+          ) : (
+            <ul className="pipeline-floating-panel__variables-list">
+              {parsedVariables.map((variable) => (
+                <li key={variable} className="pipeline-floating-panel__variables-item">
+                  {variable}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
     </section>
   );
 };
@@ -108,6 +139,7 @@ export const PipelineUI = ({
     textEditorValue,
     onTextEditorChange,
     onCloseTextEditor,
+    parsedVariables,
   }) => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
@@ -302,12 +334,7 @@ export const PipelineUI = ({
         return;
       }
 
-      const textarea = panelTextareaRef.current;
-      const textStyle = window.getComputedStyle(textarea);
-      const minHeight = Math.max(TEXTAREA_MIN_HEIGHT, parseFloat(textStyle.minHeight) || 0);
-      textarea.style.height = 'auto';
-      const nextHeight = Math.max(minHeight, Math.ceil(textarea.scrollHeight));
-      textarea.style.height = `${nextHeight}px`;
+      resizeTextarea(panelTextareaRef.current);
     }, [isTextEditorOpen, textEditorValue, panelWidth]);
 
 
@@ -422,6 +449,7 @@ export const PipelineUI = ({
                     onClose={onCloseTextEditor}
                     value={textEditorValue}
                     onChange={onTextEditorChange}
+                    parsedVariables={parsedVariables}
                   />
                 )}
             </ReactFlow>

@@ -4,10 +4,27 @@ import { PipelineUI } from './ui';
 import { SubmitButton } from './submit';
 import { useStore } from './store';
 
+const parseVariables = (text) => {
+  const regex = /{{([A-Za-z_$][A-Za-z0-9_$]*)}}/g;
+  const variables = new Set();
+  let match;
+
+  while ((match = regex.exec(text)) !== null) {
+    variables.add(match[1]);
+  }
+
+  return Array.from(variables);
+};
+
+const areArraysEqual = (left, right) =>
+  left.length === right.length && left.every((value, index) => value === right[index]);
+
 function App() {
   const [isTextEditorOpen, setIsTextEditorOpen] = useState(false);
   const [textEditorValue, setTextEditorValue] = useState('');
+  const [parsedVariables, setParsedVariables] = useState([]);
   const addNodeAtCenter = useStore((state) => state.addNodeAtCenter);
+  const setTextEditorVariables = useStore((state) => state.setTextEditorVariables);
 
   const handleTextButtonClick = () => {
     addNodeAtCenter('text');
@@ -18,6 +35,13 @@ function App() {
     setIsTextEditorOpen(false);
   };
 
+  const handleTextEditorChange = (nextValue) => {
+    setTextEditorValue(nextValue);
+    const nextVariables = parseVariables(nextValue);
+    setParsedVariables((prev) => (areArraysEqual(prev, nextVariables) ? prev : nextVariables));
+    setTextEditorVariables(nextVariables);
+  };
+
   return (
     <div className="app-shell">
       <div className="workspace-shell">
@@ -26,7 +50,8 @@ function App() {
           <PipelineUI
             isTextEditorOpen={isTextEditorOpen}
             textEditorValue={textEditorValue}
-            onTextEditorChange={setTextEditorValue}
+            parsedVariables={parsedVariables}
+            onTextEditorChange={handleTextEditorChange}
             onCloseTextEditor={handleTextEditorClose}
           />
           <SubmitButton />

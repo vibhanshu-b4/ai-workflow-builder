@@ -148,8 +148,8 @@
 ## TODOs
 
 - [ ] Make the text node resize based on entered content.
-- [ ] Parse variables in text node content using `{{ variableName }}` syntax.
-- [ ] Add dynamic target handles to text nodes for detected variables.
+- [x] Parse variables in text node content using `{{ variableName }}` syntax.
+- [x] Add dynamic target handles to text nodes for detected variables.
 - [ ] Wire submit button to collect current nodes and edges from the Zustand store.
 - [ ] Send pipeline data from frontend to backend.
 - [ ] Update FastAPI parse route to receive submitted pipeline data.
@@ -196,7 +196,7 @@
 
 - Part 3 Step 1 is complete with a floating in-canvas editor panel; remaining Part 3 work is dynamic resizing and variable-driven handles.
 - Text node dynamic resizing is still pending for Part 3.
-- Text node variable parsing and dynamic variable handles are still pending for Part 3.
+- Text node variable parsing and dynamic variable handles are complete; debug list is shown in the editor panel.
 - Node component local state is not synchronized back into the Zustand store.
 - `frontend/src/submit.js` has no submit behavior yet.
 - `backend/main.py` parse route is a stub and uses `GET` with `Form(...)`.
