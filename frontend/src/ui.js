@@ -413,6 +413,7 @@ export const PipelineUI = ({
                 proOptions={proOptions}
                 snapGrid={[gridSize, gridSize]}
                 connectionLineType='smoothstep'
+              deleteKeyCode={['Backspace', 'Delete']}
             >
                 <Background color="#6f5cff" gap={gridSize} size={1.25} variant="dots" />
                 <Controls />
