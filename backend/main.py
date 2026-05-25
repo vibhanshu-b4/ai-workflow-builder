@@ -13,7 +13,7 @@ app = FastAPI()
 def get_allowed_origins() -> List[str]:
     raw = os.getenv(
         "FRONTEND_ORIGINS",
-        "https://ai-workflow-builder1.vercel.app,http://localhost:3000,http://127.0.0.1:3000",
+        "https://ai-workflow-builder-xi.vercel.app,http://localhost:3000,http://127.0.0.1:3000",
     ).strip()
     if raw == "*":
         return ["*"]

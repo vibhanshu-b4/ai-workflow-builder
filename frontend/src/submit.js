@@ -6,8 +6,15 @@ import { useStore } from './store';
 const formatResult = (result) =>
     `Nodes: ${result.num_nodes} | Edges: ${result.num_edges} | DAG: ${result.is_dag ? 'Yes' : 'No'}`;
 
-const apiBaseUrl = (process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, '');
-const parseEndpoint = apiBaseUrl ? `${apiBaseUrl}/pipelines/parse` : '/pipelines/parse';
+const rawApiBaseUrl = (process.env.REACT_APP_API_BASE_URL || '').trim();
+const apiBaseUrl = rawApiBaseUrl.replace(/\/+$/, '');
+const fallbackApiBaseUrl =
+    process.env.NODE_ENV === 'development' ? '' : 'https://ai-workflow-builder-6ul7.onrender.com';
+const parseEndpoint = apiBaseUrl
+    ? `${apiBaseUrl}/pipelines/parse`
+    : fallbackApiBaseUrl
+        ? `${fallbackApiBaseUrl}/pipelines/parse`
+        : '/pipelines/parse';
 
 export const SubmitButton = () => {
     const nodes = useStore((state) => state.nodes);
