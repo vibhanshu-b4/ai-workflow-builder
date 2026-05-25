@@ -55,12 +55,22 @@ cd frontend_technical_assessment
 
 ### Frontend
 ```bash
+cp .env.example .env
+```
+
+If port 3000 is already in use, update `PORT` inside `frontend/.env` before starting the dev server.
+
+```bash
 cd frontend
 npm install
 npm start
 ```
 
 ### Backend
+```bash
+cp .env.example .env
+```
+
 ```bash
 cd backend
 pip install -r requirements.txt

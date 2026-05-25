@@ -20,3 +20,5 @@ venv/
 # Env files
 .env
 .env.*
+!.env.example
+!**/.env.example
