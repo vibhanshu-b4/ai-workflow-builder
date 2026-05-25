@@ -91,29 +91,27 @@
 
 ### Submit Flow
 
-- `frontend/src/submit.js` still renders a submit button only.
-- The button has `type="submit"` but is not inside a form and has no `onClick` handler.
-- No frontend request is currently made to the backend.
-- No serialization of current `nodes` and `edges` is implemented yet.
-- No success/error UI, alert, or result display is implemented yet.
+- `frontend/src/submit.js` now submits the current nodes and edges to the backend.
+- The button triggers async POST to `/pipelines/parse` with `{ nodes, edges }`.
+- Loading state disables the button and shows progress.
+- Success returns node count, edge count, and DAG status with an alert + inline status text.
+- Errors are surfaced with alerts and inline status text.
 
 ### Backend Routing
 
 - Backend is a single FastAPI file: `backend/main.py`.
 - Routes:
   - `GET /`: returns `{"Ping": "Pong"}`.
-  - `GET /pipelines/parse`: accepts `pipeline: str = Form(...)` and returns `{"status": "parsed"}`.
-- The parse route is currently a stub.
-- The parse route uses `GET` with `Form(...)`, which is unusual because form bodies normally pair with `POST`.
-- No CORS middleware is configured yet.
-- No DAG parsing, node/edge counting, or cycle detection is implemented yet.
+  - `POST /pipelines/parse`: accepts JSON `{ nodes, edges }` and returns counts + DAG status.
+- The parse route now computes node count, edge count, and DAG detection.
+- CORS middleware allows the local React dev server.
 
 ## Parts Checklist
 
 - [x] Part 1: Node abstraction
 - [x] Part 2: Styling
 - [ ] Part 3: Text node logic
-- [ ] Part 4: Backend integration and submit flow
+- [x] Part 4: Backend integration and submit flow
 - [ ] Final verification
 
 ## Completed Tasks
@@ -151,11 +149,11 @@
 - [x] Parse variables in text node content using `{{ variableName }}` syntax.
 - [x] Add dynamic target handles to text nodes for detected variables.
 - [x] Move variable labels from the editor panel to the Text node UI.
-- [ ] Wire submit button to collect current nodes and edges from the Zustand store.
-- [ ] Send pipeline data from frontend to backend.
-- [ ] Update FastAPI parse route to receive submitted pipeline data.
-- [ ] Return number of nodes, number of edges, and whether the graph is a DAG.
-- [ ] Display the backend response to the user.
+- [x] Wire submit button to collect current nodes and edges from the Zustand store.
+- [x] Send pipeline data from frontend to backend.
+- [x] Update FastAPI parse route to receive submitted pipeline data.
+- [x] Return number of nodes, number of edges, and whether the graph is a DAG.
+- [x] Display the backend response to the user.
 - [ ] Run full manual browser verification after all parts are implemented.
 
 ## UI Improvements
@@ -180,7 +178,7 @@
 - `frontend/src/draggableNode.js`: Moved drag button styling to CSS and added drag state class.
 - `frontend/src/index.css`: Added complete dark AI workflow-builder theme for app shell, sidebar, palette, canvas, nodes, handles, controls, MiniMap, submit area, and responsive states.
 - `frontend/src/store.js`: Initialized `nodeIDs`.
-- `frontend/src/submit.js`: Added submit control classes.
+- `frontend/src/submit.js`: Wired submit request handling and response display.
 - `frontend/src/toolbar.js`: Rebuilt toolbar into grouped core/demo palettes and added sidebar heading.
 - `frontend/src/ui.js`: Registered demo nodes, fixed canvas class, cleaned hook dependencies, and themed React Flow background/MiniMap.
 - `frontend/src/nodes/baseNode.js`: Added reusable node abstraction with configurable handles, classes, styles, body content, and optional click handling.
@@ -198,6 +196,9 @@
 - `frontend/src/nodes/textNode.js`: Rendered variable handles and labels on the Text node.
 - `frontend/src/nodes/textNode.js`: Triggered React Flow node-internals updates when variable handles change.
 - `frontend/src/index.css`: Removed unused editor-panel variable list styling.
+- `frontend/src/index.css`: Styled submit status text and button loading state.
+- `frontend/package.json`: Added dev proxy to the backend.
+- `backend/main.py`: Added POST parse endpoint, DAG validation, and CORS support.
 
 ## Pending Issues
 
@@ -205,9 +206,7 @@
 - Text node dynamic resizing is still pending for Part 3.
 - Text node variable parsing and dynamic variable handles are complete; labels render on the Text node.
 - Node component local state is not synchronized back into the Zustand store.
-- `frontend/src/submit.js` has no submit behavior yet.
-- `backend/main.py` parse route is a stub and uses `GET` with `Form(...)`.
-- Backend likely needs CORS configuration for local React development.
+- Submit flow depends on the backend server running on port 8000.
 - CRA build prints dependency ecosystem notices:
   - outdated Browserslist data
   - `babel-preset-react-app` undeclared plugin warning from unmaintained CRA dependency
@@ -217,17 +216,17 @@
 
 - [x] Frontend dependencies installed with `npm install`.
 - [x] Frontend starts with `npm start`.
-- [ ] Backend starts with FastAPI/Uvicorn.
+- [x] Backend starts with FastAPI/Uvicorn.
 - [ ] Dragging every toolbar node onto the canvas works.
-- [ ] Connecting compatible handles creates edges.
+- [x] Connecting compatible handles creates edges.
 - [ ] Refactored existing nodes preserve their current behavior.
 - [ ] New nodes render and connect as expected.
 - [ ] Text node grows with content without overlapping controls.
 - [ ] Text node creates/removes variable handles correctly.
-- [ ] Submit sends the actual current graph to the backend.
-- [ ] Backend returns correct node count.
-- [ ] Backend returns correct edge count.
-- [ ] Backend correctly identifies DAG vs cyclic graphs.
-- [ ] Frontend displays the backend response clearly.
+- [x] Submit sends the actual current graph to the backend.
+- [x] Backend returns correct node count.
+- [x] Backend returns correct edge count.
+- [x] Backend correctly identifies DAG vs cyclic graphs.
+- [x] Frontend displays the backend response clearly.
 - [ ] No console errors during normal usage.
 - [x] Production build succeeds with `npm run build`.

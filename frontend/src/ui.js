@@ -246,7 +246,7 @@ export const PipelineUI = ({
         window.removeEventListener('pointermove', handlePointerMove);
         window.removeEventListener('pointerup', handlePointerUp);
       };
-    }, [isPanelDragging]);
+    }, [isPanelDragging, reactFlowInstance]);
 
     const handlePanelHeaderPointerDown = (event) => {
       if (!panelRef.current) {

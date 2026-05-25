@@ -5,7 +5,7 @@ import { SubmitButton } from './submit';
 import { useStore } from './store';
 
 const parseVariables = (text) => {
-  const regex = /{{([A-Za-z_$][A-Za-z0-9_$]*)}}/g;
+  const regex = /{{\s*([A-Za-z_$][A-Za-z0-9_$]*)\s*}}/g;
   const variables = new Set();
   let match;
 
@@ -50,6 +50,7 @@ function App() {
           <PipelineUI
             isTextEditorOpen={isTextEditorOpen}
             textEditorValue={textEditorValue}
+            parsedVariables={parsedVariables}
             onTextEditorChange={handleTextEditorChange}
             onCloseTextEditor={handleTextEditorClose}
           />
