@@ -191,43 +191,6 @@ textarea {
   background: rgba(10, 6, 22, 0.96);
 }
 
-.pipeline-floating-panel__variables {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-top: 4px;
-  border-top: 1px solid rgba(151, 126, 255, 0.16);
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
-.pipeline-floating-panel__variables-label {
-  color: var(--text-soft);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.pipeline-floating-panel__variables-empty {
-  margin: 0;
-  color: rgba(184, 175, 211, 0.7);
-  font-size: 12px;
-}
-
-.pipeline-floating-panel__variables-list {
-  margin: 0;
-  padding-left: 16px;
-  display: grid;
-  gap: 4px;
-}
-
-.pipeline-floating-panel__variables-item {
-  color: var(--text);
-  font-size: 12px;
-  letter-spacing: 0.01em;
-}
-
 .pipeline-toolbar {
   min-height: 0;
   display: flex;

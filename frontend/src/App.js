@@ -50,7 +50,6 @@ function App() {
           <PipelineUI
             isTextEditorOpen={isTextEditorOpen}
             textEditorValue={textEditorValue}
-            parsedVariables={parsedVariables}
             onTextEditorChange={handleTextEditorChange}
             onCloseTextEditor={handleTextEditorClose}
           />

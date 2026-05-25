@@ -53,7 +53,6 @@ const FloatingPanel = ({
   onClose,
   value,
   onChange,
-  parsedVariables,
 }) => {
   const viewportTransform = useRFStore((state) => state.transform);
   const [vx, vy, vZoom] = viewportTransform;
@@ -105,20 +104,6 @@ const FloatingPanel = ({
         placeholder="Write prompt text..."
         onPointerDown={(event) => event.stopPropagation()}
       />
-        <div className="pipeline-floating-panel__variables">
-          <span className="pipeline-floating-panel__variables-label">Variables</span>
-          {parsedVariables.length === 0 ? (
-            <p className="pipeline-floating-panel__variables-empty">No variables detected.</p>
-          ) : (
-            <ul className="pipeline-floating-panel__variables-list">
-              {parsedVariables.map((variable) => (
-                <li key={variable} className="pipeline-floating-panel__variables-item">
-                  {variable}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
     </section>
   );
 };
@@ -138,8 +123,7 @@ export const PipelineUI = ({
     isTextEditorOpen,
     textEditorValue,
     onTextEditorChange,
-    onCloseTextEditor,
-    parsedVariables,
+  onCloseTextEditor,
   }) => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
@@ -449,7 +433,6 @@ export const PipelineUI = ({
                     onClose={onCloseTextEditor}
                     value={textEditorValue}
                     onChange={onTextEditorChange}
-                    parsedVariables={parsedVariables}
                   />
                 )}
             </ReactFlow>

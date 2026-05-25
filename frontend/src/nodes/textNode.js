@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { Position, useUpdateNodeInternals } from 'reactflow';
 import { BaseNode } from './baseNode';
 import { useStore } from '../store';
 
@@ -5,7 +7,15 @@ const getHandleTop = (index, total) => `${((index + 1) * 100) / (total + 1)}%`;
 
 export const TextNode = ({ id }) => {
   const variables = useStore((state) => state.textEditorVariables);
-  const inputHandles = variables.map((variable) => ({ id: `var-${variable}` }));
+  const updateNodeInternals = useUpdateNodeInternals();
+  const inputHandles = variables.map((variable) => ({
+    id: `var-${variable}`,
+    position: Position.Left,
+  }));
+
+  useEffect(() => {
+    updateNodeInternals(id);
+  }, [id, variables, updateNodeInternals]);
 
   return (
     <BaseNode

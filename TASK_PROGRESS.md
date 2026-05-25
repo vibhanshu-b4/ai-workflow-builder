@@ -150,6 +150,7 @@
 - [ ] Make the text node resize based on entered content.
 - [x] Parse variables in text node content using `{{ variableName }}` syntax.
 - [x] Add dynamic target handles to text nodes for detected variables.
+- [x] Move variable labels from the editor panel to the Text node UI.
 - [ ] Wire submit button to collect current nodes and edges from the Zustand store.
 - [ ] Send pipeline data from frontend to backend.
 - [ ] Update FastAPI parse route to receive submitted pipeline data.
@@ -168,6 +169,7 @@
 - Handles are larger, cleaner, consistently spaced, theme-colored, and glow on hover/connection.
 - Node typography is tighter and more readable across titles, badges, fields, descriptions, and controls.
 - Text editor now opens as a floating, draggable panel inside the canvas (no popup/modal).
+- Variable labels now render beside Text node handles instead of inside the editor panel.
 - React Flow controls, MiniMap, edges, connection lines, and submit area now match the dark workflow-builder theme.
 - Responsive layout stacks the sidebar above the canvas on smaller screens.
 
@@ -191,12 +193,17 @@
 - `frontend/src/ui.js`: Renders the floating, draggable in-canvas panel and registers a centered add-node handler.
 - `frontend/src/store.js`: Added store hook for programmatic node creation.
 - `frontend/src/index.css`: Added floating panel styling.
+- `frontend/src/App.js`: Removed parsed variable list prop from the editor panel.
+- `frontend/src/ui.js`: Removed parsed variable list from the floating editor panel UI.
+- `frontend/src/nodes/textNode.js`: Rendered variable handles and labels on the Text node.
+- `frontend/src/nodes/textNode.js`: Triggered React Flow node-internals updates when variable handles change.
+- `frontend/src/index.css`: Removed unused editor-panel variable list styling.
 
 ## Pending Issues
 
 - Part 3 Step 1 is complete with a floating in-canvas editor panel; remaining Part 3 work is dynamic resizing and variable-driven handles.
 - Text node dynamic resizing is still pending for Part 3.
-- Text node variable parsing and dynamic variable handles are complete; debug list is shown in the editor panel.
+- Text node variable parsing and dynamic variable handles are complete; labels render on the Text node.
 - Node component local state is not synchronized back into the Zustand store.
 - `frontend/src/submit.js` has no submit behavior yet.
 - `backend/main.py` parse route is a stub and uses `GET` with `Form(...)`.
