@@ -1,7 +1,7 @@
 # AI Workflow Builder
 
 ## Live Demo
-- Live: https://ai-workflow-builder1.vercel.app
+- Live:https://ai-workflow-builder-xi.vercel.app/
 
 ## Overview
 AI Workflow Builder is a visual pipeline editor for designing AI workflows and prompt-driven systems. Users assemble workflows on a React Flow canvas, connect modular nodes, and build dynamic prompts where variables automatically generate input handles. A FastAPI backend validates the submitted graph, reporting node/edge counts and DAG correctness.
@@ -40,12 +40,6 @@ AI Workflow Builder is a visual pipeline editor for designing AI workflows and p
 ## Architecture Overview
 The frontend manages node rendering, connections, and workflow state via React Flow and Zustand. On submit, the backend validates the graph structure and returns counts plus DAG status.
 
-## Screenshots
-- UI overview (placeholder)
-- TextNode editor panel (placeholder)
-- DAG validation response (placeholder)
-
-## Local Setup
 
 ### Clone Repository
 ```bash
