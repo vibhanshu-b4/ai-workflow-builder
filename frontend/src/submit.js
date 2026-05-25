@@ -6,6 +6,9 @@ import { useStore } from './store';
 const formatResult = (result) =>
     `Nodes: ${result.num_nodes} | Edges: ${result.num_edges} | DAG: ${result.is_dag ? 'Yes' : 'No'}`;
 
+const apiBaseUrl = (process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, '');
+const parseEndpoint = apiBaseUrl ? `${apiBaseUrl}/pipelines/parse` : '/pipelines/parse';
+
 export const SubmitButton = () => {
     const nodes = useStore((state) => state.nodes);
     const edges = useStore((state) => state.edges);
@@ -23,7 +26,7 @@ export const SubmitButton = () => {
         setResult(null);
 
         try {
-            const response = await fetch('/pipelines/parse', {
+            const response = await fetch(parseEndpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nodes, edges }),

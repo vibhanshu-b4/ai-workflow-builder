@@ -1,18 +1,36 @@
+import os
 from typing import Any, Dict, List, Set
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+load_dotenv()
+
 app = FastAPI()
+
+def get_allowed_origins() -> List[str]:
+    raw = os.getenv(
+        "FRONTEND_ORIGINS",
+        "https://ai-workflow-builder1.vercel.app,http://localhost:3000,http://127.0.0.1:3000",
+    ).strip()
+    if raw == "*":
+        return ["*"]
+
+    return [origin.strip() for origin in raw.split(",") if origin.strip()]
+
+
+allowed_origins = get_allowed_origins()
+allow_credentials = os.getenv("ALLOW_CREDENTIALS", "false").lower() == "true"
+
+if "*" in allowed_origins:
+    allow_credentials = False
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
-    allow_credentials=True,
+    allow_origins=allowed_origins or ["*"],
+    allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
