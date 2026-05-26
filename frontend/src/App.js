@@ -57,6 +57,16 @@ function App() {
           <SubmitButton />
         </main>
       </div>
+      <footer className="app-footer">
+        <a
+          className="app-footer__link"
+          href="https://github.com/vibhanshu-b4/ai-workflow-builder"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Contribute to GitHub
+        </a>
+      </footer>
     </div>
   );
 }
